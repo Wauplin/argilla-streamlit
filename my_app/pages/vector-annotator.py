@@ -8,7 +8,7 @@ from sklearn.decomposition import PCA
 from streamlit_plotly_events import plotly_events
 from streamlit_tags import st_tags
 from umap import UMAP
-from utils.commons import argilla_login_flow, get_dataset_list
+from utils.commons import argilla_login_flow, get_data_snapshot, get_dataset_list
 
 st.set_page_config(
     page_title="Argilla - Vector Annotator",
@@ -38,6 +38,7 @@ datasets_list = [
 dataset_argilla = st.selectbox("Argilla Dataset Name", options=datasets_list)
 dataset_argilla_name = dataset_argilla.split("/")[-1]
 dataset_argilla_workspace = dataset_argilla.split("/")[0]
+get_data_snapshot(dataset_argilla_name, dataset_argilla_workspace)
 rg.set_workspace(dataset_argilla_workspace)
 labels = []
 

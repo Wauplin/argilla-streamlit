@@ -18,7 +18,7 @@ api_url, api_key = argilla_login_flow("Hub Exporter")
 
 st.write(
     """
-    This page allows you to share your dataset from Argilla to HuggingFace Hub without requiring any code!
+    This page allows you to share your dataset from Argilla to Hugging Face Hub without requiring any code!
     In the background it uses `argilla.load().prepare_for_training()` and `datasets.push_to_hub()`.
     """
 )
@@ -42,7 +42,7 @@ target_namespace = st.selectbox(
 
 if dataset_argilla:
     dataset_huggingface = st.text_input(
-        "HuggingFace Dataset Name",
+        "Hugging Face Dataset Name",
         f"{target_namespace}/{dataset_argilla_name}",
     )
     try:
@@ -59,7 +59,7 @@ if dataset_argilla:
             "Train size", value=0.8, min_value=0.0, max_value=1.0
         )
         private = st.checkbox("Use Private Repo", value=False)
-        button = st.button("Export to HuggingFace")
+        button = st.button("Export to Hugging Face")
 
         if button:
             with st.spinner(text="Export in progress..."):
@@ -68,7 +68,7 @@ if dataset_argilla:
                 )
                 ds_ds.push_to_hub(dataset_huggingface, token=hf_auth_token)
             st.success(
-                "Dataset pushed to HuggingFace and available"
+                "Dataset pushed to Hugging Face and available"
                 f" [here](https://huggingface.co/datasets?sort=downloads&search={dataset_huggingface}"
             )
     except Exception as e:

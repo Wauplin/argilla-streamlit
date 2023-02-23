@@ -6,7 +6,12 @@ import streamlit as st
 import streamlit_analytics
 from streamlit_tags import st_tags
 from text_highlighter import text_highlighter
-from utils.commons import ArgillaSingleton, argilla_login_flow, get_dataset_list
+from utils.commons import (
+    ArgillaSingleton,
+    argilla_login_flow,
+    get_data_snapshot,
+    get_dataset_list,
+)
 
 st.set_page_config(
     page_title="Argilla - UI record creator",
@@ -41,6 +46,7 @@ if dataset_argilla == "other":
 else:
     dataset_argilla_name = dataset_argilla.split("/")[-1]
     dataset_argilla_workspace = dataset_argilla.split("/")[0]
+    get_data_snapshot(dataset_argilla_name, dataset_argilla_workspace)
     rg.set_workspace(dataset_argilla_workspace)
     for dataset in get_dataset_list(api_url, api_key):
         if (
