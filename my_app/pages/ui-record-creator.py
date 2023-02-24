@@ -1,6 +1,5 @@
-from ast import literal_eval
-
 import argilla as rg
+import pandas as pd
 import spacy
 import streamlit as st
 import streamlit_analytics
@@ -94,16 +93,18 @@ if dataset_argilla_name:
         elif dataset_type == "Text2Text":
             annotation = st.text_area("Annotation")
             record = rg.Text2TextRecord(text=text, annotation=annotation)
-        metadata = st.text_area("Metadata", value="{}")
-        metadata = literal_eval(metadata)
+        metadata = st.experimental_data_editor({"key": "value"}, num_rows="dynamic")
+        if metadata == {"key": "value"}:
+            metadata = None
         record.metadata = metadata
-        st.write(record)
+        new_record = st.experimental_data_editor(pd.DataFrame(record.dict()))
+        new_record = record.__class__(**new_record.to_dict(orient="records")[0])
     else:
         st.warning("Please enter text")
 
     save = st.button("Save")
     if save:
-        rg.log(record, dataset_argilla_name)
+        rg.log(new_record, dataset_argilla_name)
         st.success("Saved")
 else:
     st.warning("Please enter dataset name")
