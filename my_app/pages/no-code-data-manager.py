@@ -12,7 +12,7 @@ st.set_page_config(
     page_title="Argilla NoCode Data Manager", page_icon="💾", layout="wide"
 )
 
-streamlit_analytics.start_tracking(load_from_json=f"{__file__}.json")
+# streamlit_analytics.start_tracking(load_from_json=f"{__file__}.json")
 
 api_url, api_key = argilla_login_flow("No-code data manager")
 
@@ -156,4 +156,4 @@ elif action == "💾 Download dataset":
         st.info("Press the search button to load the dataset with the given query")
 
 
-streamlit_analytics.stop_tracking(save_to_json=f"{__file__}.json")
+# streamlit_analytics.stop_tracking(save_to_json=f"{__file__}.json")

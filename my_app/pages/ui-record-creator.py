@@ -15,7 +15,7 @@ st.set_page_config(
     layout="wide",
 )
 
-streamlit_analytics.start_tracking(load_from_json=f"{__file__}.json")
+# streamlit_analytics.start_tracking(load_from_json=f"{__file__}.json")
 
 api_url, api_key = argilla_login_flow("UI record creator")
 
@@ -111,4 +111,4 @@ if dataset_argilla_name:
 else:
     st.warning("Please enter dataset name")
 
-streamlit_analytics.stop_tracking(save_to_json=f"{__file__}.json")
+# streamlit_analytics.stop_tracking(save_to_json=f"{__file__}.json")

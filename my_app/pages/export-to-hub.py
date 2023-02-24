@@ -12,7 +12,7 @@ st.set_page_config(
     layout="wide",
 )
 
-streamlit_analytics.start_tracking(load_from_json=f"{__file__}.json")
+# streamlit_analytics.start_tracking(load_from_json=f"{__file__}.json")
 
 api_url, api_key = argilla_login_flow("Hub Exporter")
 
@@ -77,4 +77,4 @@ if dataset_argilla:
 else:
     st.warning("Please enter a dataset name")
 
-streamlit_analytics.stop_tracking(save_to_json=f"{__file__}.json")
+# streamlit_analytics.stop_tracking(save_to_json=f"{__file__}.json")
