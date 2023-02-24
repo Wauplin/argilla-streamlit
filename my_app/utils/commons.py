@@ -66,10 +66,8 @@ def get_data_snapshot(dataset_name, workspace, query=None):
     rg.set_workspace(workspace)
     if query == "":
         query = None
-    st.write(
-        f"Sample of the `{dataset_name}/{workspace}`",
-        rg.load(dataset_name, query=query, limit=5).to_pandas(),
-    )
+    ds = rg.load(dataset_name, query=query, limit=5).to_pandas()
+    st.write(f"Sample of the `{workspace}/{dataset_name}`", ds)
 
 
 def hf_login_flow():
