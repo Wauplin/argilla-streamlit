@@ -11,8 +11,8 @@ from umap import UMAP
 from utils.commons import argilla_login_flow, get_data_snapshot, get_dataset_list
 
 st.set_page_config(
-    page_title="Argilla - Vector Annotator",
-    page_icon=":writing_hand::skin-tone-4:",
+    page_title="Argilla - 🏹 - Vector Annotator",
+    page_icon="🏹",
     layout="wide",
 )
 
@@ -22,13 +22,13 @@ nlp.add_pipe("sentencizer")
 streamlit_analytics.start_tracking(load_from_json=f"{__file__}.json")
 
 # login workflow
-api_url, api_key = argilla_login_flow("Vector Annotator")
+api_url, api_key = argilla_login_flow("🏹 Vector Annotator")
 
 st.write(
     """
     This page allows you to annotate bulks of records from Argilla based on their [semantic vectors](https://docs.argilla.io/en/latest/guides/label_records_with_semanticsearch.html) without using any code!
     Select a subset of the data using lasso select and get labelling!
-    In the background it uses `argilla.load()`, `umap-learn`, `pandas`, and `spacy`.
+    In the background it uses `argilla.load()`, `umap-learn`, `pca`, `pandas`, and `spacy`.
     """
 )
 
