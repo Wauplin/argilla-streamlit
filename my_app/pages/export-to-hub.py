@@ -7,14 +7,14 @@ import streamlit_analytics
 from utils.commons import argilla_login_flow, get_dataset_list, hf_login_flow
 
 st.set_page_config(
-    page_title="Argilla - Hub Exporter",
-    page_icon=":writing_hand::skin-tone-4:",
+    page_title="Argilla - ⛭ - Hub Exporter",
+    page_icon="⛭",
     layout="wide",
 )
 
 streamlit_analytics.start_tracking(load_from_json=f"{__file__}.json")
 
-api_url, api_key = argilla_login_flow("Hub Exporter")
+api_url, api_key = argilla_login_flow("⛭ Hub Exporter")
 
 st.write(
     """

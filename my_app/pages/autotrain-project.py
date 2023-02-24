@@ -13,19 +13,19 @@ from utils.commons import (
 )
 
 st.set_page_config(
-    page_title="Argilla - Autotrain Project",
-    page_icon=":writing_hand::skin-tone-4:",
+    page_title="Argilla - 🦾 - Autotrain Project",
+    page_icon="🦾",
     layout="wide",
 )
 
 streamlit_analytics.start_tracking(load_from_json=f"{__file__}.json")
 
-api_url, api_key = argilla_login_flow("Autotrain Project")
+api_url, api_key = argilla_login_flow("🦾 Autotrain Project")
 
 st.write(
     """
-    This page allows you to share your dataset from Argilla to Hugging Face Hub without requiring any code!
-    In the background it uses `argilla.load().prepare_for_training()` and `datasets.push_to_hub()`.
+    This page allows you to train a model using [AutoTrain](https://ui.autotrain.huggingface.co) wihout using any code based on you Argilla datasets!
+    In the background it uses `argilla.load().prepare_for_training()`, `datasets.push_to_hub()` and the [AutoTrain API](https://api.autotrain.huggingface.co/docs).
     """
 )
 
