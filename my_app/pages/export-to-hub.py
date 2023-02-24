@@ -18,7 +18,7 @@ api_url, api_key = argilla_login_flow("⛭ Hub Exporter")
 
 st.write(
     """
-    This page allows you to share your dataset from Argilla to Hugging Face Hub without requiring any code!
+    This page allows you to share your dataset from Argilla to [Hugging Face Hub](https://huggingface.co/datasets) without requiring any code!
     In the background it uses `argilla.load().prepare_for_training()` and `datasets.push_to_hub()`.
     """
 )

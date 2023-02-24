@@ -15,18 +15,18 @@ from utils.commons import (
 )
 
 st.set_page_config(
-    page_title="Argilla - ✍️ - UI record creator",
+    page_title="Argilla - ✍️ - Manual record creator",
     page_icon="✍️",
     layout="wide",
 )
 
 # streamlit_analytics.start_tracking(load_from_json=f"{__file__}.json")
 
-api_url, api_key = argilla_login_flow("✍️ UI record creator")
+api_url, api_key = argilla_login_flow("✍️ Manual record creator")
 
 st.write(
     """
-    This page allows you to create and annotate individual record from Argilla without using any code!
+    This page allows you to create and annotate individual records from Argilla without using any code!
     In the background it uses `argilla.log()` and `TextClassificationRecord`, `TokenClassificationRecord`, and `Text2TextRecord`.
     """
 )
