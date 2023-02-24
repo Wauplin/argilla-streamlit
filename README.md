@@ -4,7 +4,7 @@ emoji: 👑 🏎️
 colorFrom: yellow
 colorTo: indigo
 sdk: streamlit
-sdk_version: 1.17.0
+sdk_version: 1.19.0
 app_file: my_app/introduction.py
 pinned: false
 fullWidth: true
