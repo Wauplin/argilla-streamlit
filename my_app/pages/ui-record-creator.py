@@ -1,3 +1,5 @@
+from ast import literal_eval
+
 import argilla as rg
 import pandas as pd
 import spacy
@@ -93,11 +95,11 @@ if dataset_argilla_name:
         elif dataset_type == "Text2Text":
             annotation = st.text_area("Annotation")
             record = rg.Text2TextRecord(text=text, annotation=annotation)
-        metadata = st.experimental_data_editor({"key": "value"}, num_rows="dynamic")
-        if metadata == {"key": "value"}:
-            metadata = None
+        metadata = st.text_area("Metadata", value="{}")
+        metadata = literal_eval(metadata)
+
         record.metadata = metadata
-        new_record = st.experimental_data_editor(pd.DataFrame(record.dict()))
+        new_record = st.write(pd.DataFrame(record.dict()))
         new_record = record.__class__(**new_record.to_dict(orient="records")[0])
     else:
         st.warning("Please enter text")
