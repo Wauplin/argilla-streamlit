@@ -5,7 +5,8 @@ st.set_page_config(page_title="Argilla Streamlit", page_icon="👋", layout="wid
 
 # streamlit_analytics.start_tracking(load_from_json=f"{__file__}.json")
 
-st.image("https://docs.argilla.io/en/latest/_static/images/logo-light-mode.svg")
+x = st.columns(3)
+x[0].image("https://docs.argilla.io/en/latest/_static/images/logo-light-mode.svg", use_column_width=True)
 
 st.write("# Welcome to Argilla Streamlit! 👋")
 
@@ -19,7 +20,7 @@ st.markdown(
     Argilla is a production-ready framework for building and improving datasets for NLP projects. This repo is focused on extended UI functionalities for Argilla. 👑
 
     **👈 Select an app from the sidebar** to see some examples
-    of what Streamlit can do!
+    of what Argilla Streamlit Customsw can do!
 
     ## Next Steps
     If you want to continue learning Argilla:

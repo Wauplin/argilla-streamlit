@@ -21,7 +21,8 @@ def argilla_login_flow(title: str) -> str:
     Returns:
       The api_url is being returned.
     """
-    st.image("https://docs.argilla.io/en/latest/_static/images/logo-light-mode.svg")
+    x = st.columns(3)
+    x[0].image("https://docs.argilla.io/en/latest/_static/images/logo-light-mode.svg", use_column_width=True)
 
     api_url = None
     if os.environ.get("ARGILLA_API_URL") and os.environ.get("ARGILLA_API_KEY"):
