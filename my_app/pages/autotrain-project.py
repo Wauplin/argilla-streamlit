@@ -1,4 +1,3 @@
-from datetime import datetime
 
 import argilla as rg
 import streamlit as st
@@ -105,8 +104,8 @@ elif task_id in [8]:
 
 
 directly_train = False
-free_training = st.checkbox("Train for free (max 3000 samples)", value=True)
-
+free_training = st.checkbox("Train for free (max. 3000 samples)", value=True)
+st.warning("Autotrain@HF is currently in beta and only allows public datasets, hence your data will published publically.")
 start = st.button("Schedule Autotrain")
 
 if start:
