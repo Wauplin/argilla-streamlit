@@ -1,3 +1,5 @@
+import time
+
 import requests
 import streamlit as st
 from huggingface_hub.hf_api import HfApi
@@ -10,7 +12,7 @@ task_id_mapping = {
     "text-classification-binary": 1,
     "text-classification-multi-class": 2,
     "token-classification": 4,
-    "question-answering-extractive": 5,
+    # "question-answering-extractive": 5,
     "summarization": 8,
     # "text-regression": 10,
     # "image-multi-class-classification": 18,
@@ -21,6 +23,7 @@ task_id_mapping = {
 }
 
 
+
 class AutoTrainInfo(BaseModel):
     hf_auth_token: str
     target_namespace: str
@@ -28,7 +31,9 @@ class AutoTrainInfo(BaseModel):
     input_model: str
     autotrain_project_prefix: str
     task_id: int
-    project_id: int = None
+    project_id: str = None
+    directly_train: bool
+    mapping: dict
 
 
 def get_projects(hf_auth_token):
@@ -37,34 +42,39 @@ def get_projects(hf_auth_token):
 
 def schedule_retrain(
     hf_auth_token,
-    target_namespace,
+    target_organization,
     input_dataset,
     input_model,
     autotrain_project_prefix,
     task_id,
+    directly_train,
+    mapping,
 ):
     payload = AutoTrainInfo(
         hf_auth_token=hf_auth_token,
-        target_namespace=target_namespace,
+        target_namespace=target_organization,
         input_dataset=input_dataset,
         input_model=input_model,
         autotrain_project_prefix=autotrain_project_prefix,
         task_id=task_id,
+        directly_train=directly_train,
+        mapping=mapping,
     )
     # Create the autotrain project
-    AutoTrain.list_projects(payload)
-    # try:
-    #     project = AutoTrain.create_project(payload)
-    #     payload.project_id = project["id"]
-    #     AutoTrain.add_data(payload)
-    #     AutoTrain.start_processing(payload)
-    # except requests.HTTPError as err:
-    #     print("ERROR while requesting AutoTrain API:")
-    #     print(f"  code: {err.response.status_code}")
-    #     print(f"  {err.response.json()}")
-    #     raise
-    # # Notify in the community tab
-    # notify_success(payload)
+    try:
+        project = AutoTrain.create_project(payload)
+        payload.project_id = project["id"]
+        AutoTrain.add_data(payload)
+        AutoTrain.start_processing(payload)
+        if payload.directly_train:
+            AutoTrain.start_training(payload)
+    except requests.HTTPError as err:
+        print("ERROR while requesting AutoTrain API:")
+        print(f"  code: {err.response.status_code}")
+        print(f"  {err.response.json()}")
+        raise
+    # Notify in the community tab
+    notify_success(payload)
 
     return {"processed": True}
 
@@ -85,8 +95,8 @@ class AutoTrain:
             f"{AUTOTRAIN_API_URL}/projects/create",
             json={
                 "username": payload.target_namespace,
-                "proj_name": f"{payload.autotrain_project_prefix}",
-                "task": payload.task_id,  # image-multi-class-classification
+                "proj_name": payload.autotrain_project_prefix,
+                "task": payload.task_id,
                 "config": {
                     "hub-model": payload.input_model,
                     "max_models": 1,
@@ -106,11 +116,20 @@ class AutoTrain:
             json={
                 "dataset_id": payload.input_dataset,
                 "dataset_split": "train",
-                "split": 4,
-                "col_mapping": {
-                    "text": "text",
-                    "label": "target",
-                },
+                "split": 1,
+                "col_mapping": payload.mapping,
+            },
+            headers={
+                "Authorization": f"Bearer {payload.hf_auth_token}",
+            },
+        ).raise_for_status()
+        requests.post(
+            f"{AUTOTRAIN_API_URL}/projects/{payload.project_id}/data/dataset",
+            json={
+                "dataset_id": payload.input_dataset,
+                "dataset_split": "test",
+                "split": 2,
+                "col_mapping": payload.mapping,
             },
             headers={
                 "Authorization": f"Bearer {payload.hf_auth_token}",
@@ -126,6 +145,23 @@ class AutoTrain:
             },
         )
         resp.raise_for_status()
+        return resp
+
+    @staticmethod
+    def start_training(payload: AutoTrainInfo):
+        succeeded = False
+        with st.spinner("Waiting for data to be processed..."):
+            while not succeeded:
+                resp = requests.post(
+                    f"{AUTOTRAIN_API_URL}/projects/{payload.project_id}/data/start_processing",
+                    headers={
+                        "Authorization": f"Bearer {payload.hf_auth_token}",
+                    },
+                )
+                time.sleep()
+                if resp.status_code == 200:
+                    succeeded = True
+
         return resp
 
 

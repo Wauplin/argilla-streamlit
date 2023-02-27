@@ -5,16 +5,20 @@ import pandas as pd
 import spacy
 import streamlit as st
 import streamlit_analytics
-import xlsxwriter
-from utils.commons import ArgillaSingleton, argilla_login_flow, get_dataset_list
+from utils.commons import (
+    ArgillaSingleton,
+    argilla_login_flow,
+    get_data_snapshot,
+    get_dataset_list,
+)
 
 st.set_page_config(
-    page_title="Argilla NoCode Data Manager", page_icon="💾", layout="wide"
+    page_title="Argilla - 💾 - NoCode Data Manager", page_icon="💾", layout="wide"
 )
 
 # streamlit_analytics.start_tracking(load_from_json=f"{__file__}.json")
 
-api_url, api_key = argilla_login_flow("No-code data manager")
+api_url, api_key = argilla_login_flow("💾 No-code data manager")
 
 st.write(
     """
@@ -42,6 +46,7 @@ if action == "✍️ Upload Dataset":
     else:
         dataset_argilla_name = dataset_argilla.split("/")[-1]
         dataset_argilla_workspace = dataset_argilla.split("/")[0]
+        get_data_snapshot(dataset_argilla_name, dataset_argilla_workspace)
         rg.set_workspace(dataset_argilla_workspace)
         for dataset in get_dataset_list(api_url, api_key):
             if (
@@ -119,10 +124,12 @@ elif action == "💾 Download dataset":
     dataset_argilla = st.selectbox("Argilla Dataset Name", options=datasets_list)
     dataset_argilla_name = dataset_argilla.split("/")[-1]
     dataset_argilla_workspace = dataset_argilla.split("/")[0]
+
     query = st.text_input(
         "Query to filter records (optional). See [query"
         " syntax](https://docs.argilla.io/en/latest/guides/query_datasets.html)"
     )
+    get_data_snapshot(dataset_argilla_name, dataset_argilla_workspace, query)
     search = st.button("Search")
     if search:
         rg.set_workspace(dataset_argilla_workspace)

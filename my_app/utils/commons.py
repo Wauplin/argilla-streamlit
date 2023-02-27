@@ -33,7 +33,8 @@ def argilla_login_flow(title: str) -> str:
         )
         st.success(
             f"Logged in at {os.environ.get('ARGILLA_API_URL')}, and workspace is"
-            f" {rg.get_workspace()}. Change `ARGILLA_API_URL` and `ARGILLA_API_KEY` as"
+            f" {rg.get_workspace()}. Change `ARGILLA_API_URL` and `ARGILLA_API_KEY` to"
+            " use a different endpoint."
         )
     else:
         try:
@@ -61,6 +62,15 @@ def argilla_login_flow(title: str) -> str:
     return api_url, api_key
 
 
+
+def get_data_snapshot(dataset_name, workspace, query=None):
+    rg.set_workspace(workspace)
+    if query == "":
+        query = None
+    ds = rg.load(dataset_name, query=query, limit=5).to_pandas()
+    st.write(f"Sample of the `{workspace}/{dataset_name}`", ds)
+
+
 def hf_login_flow():
     """
     It checks if the user has provided a Hugging Face API token in the environment variable
@@ -72,12 +82,12 @@ def hf_login_flow():
     hf_auth_token = os.environ.get("HF_AUTH_TOKEN", "")
     if not hf_auth_token:
         hf_auth_token = st.sidebar.text_input(
-            "HuggingFace [User Access Tokens](https://huggingface.co/settings/tokens)",
+            "Hugging Face [User Access Tokens](https://huggingface.co/settings/tokens)",
             os.environ.get("HF_AUTH_TOKEN", ""),
         )
     if not hf_auth_token:
         st.error(
-            "Please provide a HuggingFace [User Access"
+            "Please provide a Hugging Face [User Access"
             " Tokens](https://huggingface.co/settings/tokens) in the sidebar or set"
             " `HF_AUTH_TOKEN` as environment variable"
         )

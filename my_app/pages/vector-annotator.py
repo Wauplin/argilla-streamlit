@@ -3,16 +3,15 @@ import numpy as np
 import plotly.express as px
 import spacy
 import streamlit as st
-import streamlit_analytics
 from sklearn.decomposition import PCA
 from streamlit_plotly_events import plotly_events
 from streamlit_tags import st_tags
 from umap import UMAP
-from utils.commons import argilla_login_flow, get_dataset_list
+from utils.commons import argilla_login_flow, get_data_snapshot, get_dataset_list
 
 st.set_page_config(
-    page_title="Argilla - Vector Annotator",
-    page_icon=":writing_hand::skin-tone-4:",
+    page_title="Argilla - 🏹 - Vector Annotator",
+    page_icon="🏹",
     layout="wide",
 )
 
@@ -22,13 +21,13 @@ nlp.add_pipe("sentencizer")
 # streamlit_analytics.start_tracking(load_from_json=f"{__file__}.json")
 
 # login workflow
-api_url, api_key = argilla_login_flow("Vector Annotator")
+api_url, api_key = argilla_login_flow("🏹 Vector Annotator")
 
 st.write(
     """
     This page allows you to annotate bulks of records from Argilla based on their [semantic vectors](https://docs.argilla.io/en/latest/guides/label_records_with_semanticsearch.html) without using any code!
     Select a subset of the data using lasso select and get labelling!
-    In the background it uses `argilla.load()`, `umap-learn`, `pandas`, and `spacy`.
+    In the background it uses `argilla.load()`, `umap-learn`, `pca`, `pandas`, and `spacy`.
     """
 )
 
@@ -38,6 +37,7 @@ datasets_list = [
 dataset_argilla = st.selectbox("Argilla Dataset Name", options=datasets_list)
 dataset_argilla_name = dataset_argilla.split("/")[-1]
 dataset_argilla_workspace = dataset_argilla.split("/")[0]
+get_data_snapshot(dataset_argilla_name, dataset_argilla_workspace)
 rg.set_workspace(dataset_argilla_workspace)
 labels = []
 
