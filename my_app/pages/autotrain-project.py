@@ -12,14 +12,14 @@ from utils.commons import (
 )
 
 st.set_page_config(
-    page_title="Argilla - 🦾 - Autotrain Project",
+    page_title="Argilla - 🦾 - AutoTrain Project",
     page_icon="🦾",
     layout="wide",
 )
 
 streamlit_analytics.start_tracking(load_from_json=f"{__file__}.json")
 
-api_url, api_key = argilla_login_flow("🦾 Autotrain Project")
+api_url, api_key = argilla_login_flow("🦾 AutoTrain Project")
 
 st.write(
     """
@@ -31,15 +31,15 @@ st.write(
 hf_auth_token, api = hf_login_flow()
 
 user_info = api.whoami()
-namespaces = [user_info["name"]] + [org["name"] for org in user_info["orgs"]]
+organizations = [user_info["name"]] + [org["name"] for org in user_info["orgs"]]
 
 projects = get_projects(hf_auth_token)
 project_ids = [proj["proj_name"] for proj in projects]
 
-target_namespace = st.selectbox(
-    "Hugging Face namespace",
-    options=namespaces,
-    help="the namespace where the trained model should end up",
+target_organization = st.selectbox(
+    "Hugging Face organization",
+    options=organizations,
+    help="the organization where the trained model should end up",
 )
 
 datasets_list = [
@@ -57,7 +57,7 @@ get_data_snapshot(
 
 input_model = st.text_input(
     "Input Model [from the hub](https://huggingface.co/models)",
-    value="bert-base-uncased",
+    value="olm/olm-roberta-base-latest",
     help="the base model to re-train",
 )
 
@@ -105,8 +105,8 @@ elif task_id in [8]:
 
 directly_train = False
 free_training = st.checkbox("Train for free (max. 3000 samples)", value=True)
-st.warning("Autotrain@HF is currently in beta and only allows public datasets, hence your data will published publically.")
-start = st.button("Schedule Autotrain")
+st.warning("AutoTrain@HF is currently in beta and only allows public datasets, hence your data will published publically.")
+start = st.button("Schedule AutoTrain")
 
 if start:
     with st.spinner(text="Export in progress..."):
@@ -117,7 +117,7 @@ if start:
             ds = rg.load(dataset_argilla_name)
         ds_ds = ds.prepare_for_training(framework="transformers", train_size=0.8)
 
-        input_dataset = f"{target_namespace}/{dataset_argilla_name}"
+        input_dataset = f"{target_organization}/{dataset_argilla_name}"
         ds_ds.push_to_hub(
             input_dataset,
             token=hf_auth_token,
@@ -129,7 +129,7 @@ if start:
 
     schedule_retrain(
         hf_auth_token=hf_auth_token,
-        target_namespace=target_namespace,
+        target_organization=target_organization,
         input_dataset=input_dataset,
         input_model=input_model,
         autotrain_project_prefix=autotrain_project_name,

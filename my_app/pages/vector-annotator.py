@@ -3,7 +3,6 @@ import numpy as np
 import plotly.express as px
 import spacy
 import streamlit as st
-import streamlit_analytics
 from sklearn.decomposition import PCA
 from streamlit_plotly_events import plotly_events
 from streamlit_tags import st_tags

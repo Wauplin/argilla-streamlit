@@ -4,7 +4,6 @@ import argilla as rg
 import pandas as pd
 import spacy
 import streamlit as st
-import streamlit_analytics
 from streamlit_tags import st_tags
 from text_highlighter import text_highlighter
 from utils.commons import (
@@ -68,6 +67,7 @@ if dataset_argilla_name:
 
         if not any(labels):
             st.warning("No labels provided")
+
             st.stop()
         if dataset_type == "TextClassification":
             multi_label = st.radio("multi label", [False, True], horizontal=True)

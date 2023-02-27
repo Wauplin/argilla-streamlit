@@ -62,6 +62,7 @@ def argilla_login_flow(title: str) -> str:
     return api_url, api_key
 
 
+
 def get_data_snapshot(dataset_name, workspace, query=None):
     rg.set_workspace(workspace)
     if query == "":

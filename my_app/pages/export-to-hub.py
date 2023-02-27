@@ -1,9 +1,6 @@
-import os
 
 import argilla as rg
-import datasets
 import streamlit as st
-import streamlit_analytics
 from utils.commons import argilla_login_flow, get_dataset_list, hf_login_flow
 
 st.set_page_config(
@@ -27,23 +24,23 @@ hf_auth_token, api = hf_login_flow()
 
 
 user_info = api.whoami()
-namespaces = [user_info["name"]] + [org["name"] for org in user_info["orgs"]]
+organizations = [user_info["name"]] + [org["name"] for org in user_info["orgs"]]
 datasets_list = [
     f"{ds['owner']}/{ds['name']}" for ds in get_dataset_list(api_url, api_key)
 ]
 dataset_argilla = st.selectbox("Argilla Dataset Name", options=datasets_list)
 dataset_argilla_name = dataset_argilla.split("/")[-1]
 dataset_argilla_workspace = dataset_argilla.split("/")[0]
-target_namespace = st.selectbox(
-    "Target HF organization for saving trained model",
-    options=namespaces,
-    help="the namespace where the trained model should end up",
+target_organization = st.selectbox(
+    "Target Hugging Face organization for saving the data",
+    options=organizations,
+    help="the namespace where the data should be saved",
 )
 
 if dataset_argilla:
     dataset_huggingface = st.text_input(
         "Hugging Face Dataset Name",
-        f"{target_namespace}/{dataset_argilla_name}",
+        f"{target_organization}/{dataset_argilla_name}",
     )
     try:
         query = st.text_input(

@@ -1,6 +1,5 @@
 # Contents of ~/my_app/streamlit_app.py
 import streamlit as st
-import streamlit_analytics
 
 st.set_page_config(page_title="Argilla Streamlit", page_icon="👋", layout="wide")
 
@@ -29,5 +28,6 @@ st.markdown(
     - 📚 Argilla [documentation](https://docs.argilla.io) for more guides and tutorials.
     """
 )
+
 
 # streamlit_analytics.stop_tracking(save_to_json=f"{__file__}.json")

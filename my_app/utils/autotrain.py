@@ -23,6 +23,7 @@ task_id_mapping = {
 }
 
 
+
 class AutoTrainInfo(BaseModel):
     hf_auth_token: str
     target_namespace: str
@@ -41,7 +42,7 @@ def get_projects(hf_auth_token):
 
 def schedule_retrain(
     hf_auth_token,
-    target_namespace,
+    target_organization,
     input_dataset,
     input_model,
     autotrain_project_prefix,
@@ -51,7 +52,7 @@ def schedule_retrain(
 ):
     payload = AutoTrainInfo(
         hf_auth_token=hf_auth_token,
-        target_namespace=target_namespace,
+        target_namespace=target_organization,
         input_dataset=input_dataset,
         input_model=input_model,
         autotrain_project_prefix=autotrain_project_prefix,
