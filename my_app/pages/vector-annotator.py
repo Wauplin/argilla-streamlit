@@ -143,7 +143,7 @@ if dataset_argilla_name and labels:
         if st.button("Annotate"):
             df_new["annotation"] = annotation
             ds_update = rg.read_pandas(df_new, task="TextClassification")
-            rg.log(ds_update, api_url=api_url)
+            rg.log(ds_update, name=dataset_argilla_name)
     else:
         st.warning("No point selected")
 else:
