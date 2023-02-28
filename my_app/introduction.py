@@ -20,7 +20,7 @@ st.markdown(
     Argilla is a production-ready framework for building and improving datasets for NLP projects. This repo is focused on extended UI functionalities for Argilla. 👑
 
     **👈 Select an app from the sidebar** to see some examples
-    of what Argilla Streamlit Customsw can do!
+    of what Argilla Streamlit Customs can do!
 
     ## Next Steps
     If you want to continue learning Argilla:
