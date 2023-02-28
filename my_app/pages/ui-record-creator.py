@@ -106,13 +106,12 @@ if dataset_argilla_name:
 
         record.metadata = metadata
         new_record = st.write(pd.DataFrame(record.dict()))
-        new_record = record.__class__(**new_record.to_dict(orient="records")[0])
     else:
         st.warning("Please enter text")
 
     save = st.button("Save")
     if save:
-        rg.log(new_record, dataset_argilla_name)
+        rg.log(record, dataset_argilla_name)
         st.success("Saved")
 else:
     st.warning("Please enter dataset name")

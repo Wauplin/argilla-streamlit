@@ -13,7 +13,8 @@ st.write("# Welcome to Argilla Streamlit! 👋")
 st.sidebar.success("Select on of the apps above.")
 
 st.success(
-    "PRs are welcome! 🙌 [Github repo](https://github.com/argilla-io/argilla-streamlit)"
+    "PRs are welcome on our [Github repo](https://github.com/argilla-io/argilla-streamlit)! 🙌  \n\n"
+    "Check it out on the [Hugging Face Hub](https://huggingface.co/spaces/argilla/argilla-streamlit-customs)! 🚀 "
 )
 st.markdown(
     """

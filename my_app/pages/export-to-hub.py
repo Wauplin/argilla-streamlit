@@ -42,35 +42,31 @@ if dataset_argilla:
         "Hugging Face Dataset Name",
         f"{target_organization}/{dataset_argilla_name}",
     )
-    try:
-        query = st.text_input(
-            "Query to filter records (optional). See [query"
-            " syntax](https://docs.argilla.io/en/latest/guides/query_datasets.html)",
-            value="status: Validated",
-        )
-        with st.spinner(text="Loading dataset..."):
-            rg.set_workspace(dataset_argilla_workspace)
-            ds = rg.load(dataset_argilla_name, query=query)
-        st.write("Below is a subset of the dataframe", ds.to_pandas().head(5))
-        train_size = st.number_input(
-            "Train size", value=0.8, min_value=0.0, max_value=1.0
-        )
-        private = st.checkbox("Use Private Repo", value=False)
-        button = st.button("Export to Hugging Face")
+    query = st.text_input(
+        "Query to filter records (optional). See [query"
+        " syntax](https://docs.argilla.io/en/latest/guides/query_datasets.html)",
+        value="status: Validated",
+    )
+    with st.spinner(text="Loading dataset..."):
+        rg.set_workspace(dataset_argilla_workspace)
+        ds = rg.load(dataset_argilla_name, query=query)
+    st.write("Below is a subset of the dataframe", ds.to_pandas().head(5))
+    train_size = st.number_input(
+        "Train size", value=0.8, min_value=0.0, max_value=1.0
+    )
+    private = st.checkbox("Use Private Repo", value=False)
+    button = st.button("Export to Hugging Face")
 
-        if button:
-            with st.spinner(text="Export in progress..."):
-                ds_ds = ds.prepare_for_training(
-                    framework="transformers", train_size=train_size
-                )
-                ds_ds.push_to_hub(dataset_huggingface, token=hf_auth_token)
-            st.success(
-                "Dataset pushed to Hugging Face and available"
-                f" [here](https://huggingface.co/datasets?sort=downloads&search={dataset_huggingface}"
+    if button:
+        with st.spinner(text="Export in progress..."):
+            ds_ds = ds.prepare_for_training(
+                framework="transformers", train_size=train_size
             )
-    except Exception as e:
-        st.error("Invalid dataset name or query")
-        st.write(e)
+            ds_ds.push_to_hub(dataset_huggingface, token=hf_auth_token)
+        st.success(
+            "Dataset pushed to Hugging Face and available"
+            f" [here](https://huggingface.co/datasets?sort=downloads&search={dataset_huggingface})"
+        )
 else:
     st.warning("Please enter a dataset name")
 
