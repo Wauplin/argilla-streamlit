@@ -1,7 +1,6 @@
 
 import argilla as rg
 import streamlit as st
-import streamlit_analytics
 from huggingface_hub import ModelFilter
 from utils.autotrain import get_projects, schedule_retrain, task_id_mapping
 from utils.commons import (
@@ -17,7 +16,6 @@ st.set_page_config(
     layout="wide",
 )
 
-streamlit_analytics.start_tracking(load_from_json=f"{__file__}.json")
 
 api_url, api_key = argilla_login_flow("🦾 AutoTrain Project")
 
@@ -139,4 +137,3 @@ if start:
     )
 
 
-streamlit_analytics.stop_tracking(save_to_json=f"{__file__}.json")

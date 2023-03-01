@@ -3,7 +3,6 @@ import streamlit as st
 
 st.set_page_config(page_title="Argilla Streamlit", page_icon="👋", layout="wide")
 
-# streamlit_analytics.start_tracking(load_from_json=f"{__file__}.json")
 
 x = st.columns(3)
 x[0].image("https://docs.argilla.io/en/latest/_static/images/logo-light-mode.svg", use_column_width=True)
@@ -32,4 +31,3 @@ st.markdown(
 )
 
 
-# streamlit_analytics.stop_tracking(save_to_json=f"{__file__}.json")

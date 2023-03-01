@@ -12,8 +12,7 @@
 #     layout="wide",
 # )
 
-# # streamlit_analytics.start_tracking(load_from_json=f"{__file__}.json")
-# st.image("https://docs.argilla.io/en/latest/_static/images/logo-light-mode.svg")
+# # st.image("https://docs.argilla.io/en/latest/_static/images/logo-light-mode.svg")
 # st.title("Annotation Comment and Note support")
 
 # # login workflow
@@ -175,4 +174,4 @@
 #     st.warning("No records found")
 
 
-# # streamlit_analytics.stop_tracking(save_to_json=f"{__file__}.json")
+# 

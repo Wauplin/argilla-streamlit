@@ -19,7 +19,6 @@ st.set_page_config(
 
 seg = pysbd.Segmenter(language="en", clean=False)
 
-# streamlit_analytics.start_tracking(load_from_json=f"{__file__}.json")
 
 # login workflow
 api_url, api_key = argilla_login_flow("🏹 Vector Annotator")
@@ -158,4 +157,3 @@ if dataset_argilla_name and labels:
 else:
     st.warning("Please enter a dataset name and labels")
 
-# streamlit_analytics.stop_tracking(save_to_json=f"{__file__}.json")
