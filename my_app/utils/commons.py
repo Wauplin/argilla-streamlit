@@ -24,7 +24,8 @@ def argilla_login_flow(title: str) -> str:
     x = st.columns(3)
     x[0].image("https://docs.argilla.io/en/latest/_static/images/logo-light-mode.svg", use_column_width=True)
 
-    api_url = None
+    api_url, api_key = None, None
+
     if os.environ.get("ARGILLA_API_URL") and os.environ.get("ARGILLA_API_KEY"):
         api_url = os.environ.get("ARGILLA_API_URL")
         api_key = os.environ.get("ARGILLA_API_KEY")
@@ -38,11 +39,11 @@ def argilla_login_flow(title: str) -> str:
             " use a different endpoint."
         )
     else:
+        api_url = st.sidebar.text_input(
+            "API URL", "https://argilla-live-demo.hf.space"
+        )
+        api_key = st.sidebar.text_input("API Key", value="team.apikey")
         try:
-            api_url = st.sidebar.text_input(
-                "API URL", "https://argilla-live-demo.hf.space"
-            )
-            api_key = st.sidebar.text_input("API Key", value="team.apikey")
             rg.init(
                 api_url=api_url,
                 api_key=api_key,
