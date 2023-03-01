@@ -1,7 +1,9 @@
+import re
+
 import argilla as rg
 import numpy as np
 import plotly.express as px
-import spacy
+import pysbd
 import streamlit as st
 from sklearn.decomposition import PCA
 from streamlit_plotly_events import plotly_events
@@ -15,8 +17,7 @@ st.set_page_config(
     layout="wide",
 )
 
-nlp = spacy.blank("en")
-nlp.add_pipe("sentencizer")
+seg = pysbd.Segmenter(language="en", clean=False)
 
 # streamlit_analytics.start_tracking(load_from_json=f"{__file__}.json")
 
@@ -32,7 +33,7 @@ st.write(
 )
 
 datasets_list = [
-    f"{ds['owner']}/{ds['name']}" for ds in get_dataset_list(api_url, api_key)
+    f"{ds['owner']}/{ds['name']}" for ds in get_dataset_list(api_url, api_key) if ds["task"] == "TextClassification"
 ]
 dataset_argilla = st.selectbox("Argilla Dataset Name", options=datasets_list)
 dataset_argilla_name = dataset_argilla.split("/")[-1]
@@ -41,15 +42,6 @@ get_data_snapshot(dataset_argilla_name, dataset_argilla_workspace)
 rg.set_workspace(dataset_argilla_workspace)
 labels = []
 
-for dataset in get_dataset_list(api_url, api_key):
-    if (
-        dataset["name"] == dataset_argilla_name
-        and dataset["owner"] == dataset_argilla_workspace
-    ):
-        labels = dataset["labels"]
-        if dataset["task"] != "TextClassification":
-            st.warning("Only TextClassificationRecord is supported")
-            st.stop()
 labels = st_tags(label="Labels", value=labels, text="Press enter to add more")
 
 st.info(
@@ -91,59 +83,76 @@ if dataset_argilla_name and labels:
             vector_name = list(vectors[0].keys())[0]
         vectors = np.array([v[vector_name] for v in vectors])
 
-        if fast_mode:
-            # Reduce the dimensions with UMAP
-            umap = UMAP()
-            X_tfm = umap.fit_transform(vectors)
-        else:
-            pca = PCA(n_components=2)
-            X_tfm = pca.fit_transform(vectors)
+        # @st.cache(allow_output_mutation=True)
+        def compute_vecors(vectors, fast_mode):
+            if fast_mode:
+                # Reduce the dimensions with UMAP
+                umap = UMAP()
+                X_tfm = umap.fit_transform(vectors)
+            else:
+                pca = PCA(n_components=2)
+                X_tfm = pca.fit_transform(vectors)
+            return X_tfm
 
+        X_tfm = compute_vecors(vectors, fast_mode)
         # # Apply coordinates
         df["x"] = X_tfm[:, 0]
         df["y"] = X_tfm[:, 1]
 
-        sentencized_docs = nlp.pipe(df.text.values)
+        sentencized_docs = df.text.values
         sentencized_text = [
-            "<br>".join([sent.text for sent in doc.sents]) for doc in sentencized_docs
+            "<br>".join("<br>".join(re.split("\s{2,}", sent)) for sent in seg.segment(doc)) for doc in sentencized_docs
         ]
         df["formatted_text"] = sentencized_text
-        return df, ds
 
-    df, ds = load_dataset(dataset_argilla_name, query, fast, n_records)
+        df = df.sort_values(by="id")
+        return df
+
+    df = load_dataset(dataset_argilla_name, query, fast, n_records)
+    multi_label = df.multi_label.values[0]
+
     fig = px.scatter(
         data_frame=df,
         x="x",
         y="y",
-        hover_data={
-            "formatted_text": True,
-            "prediction": True,
-            "annotation": True,
-            "x": False,
-            "y": False,
-        },
-        title="Records to Highlight",
+        color="annotation",
+        color_discrete_sequence=['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999'],
+        custom_data=['formatted_text', 'prediction', 'annotation'],
+        title="Records to Annotate",
     )
+    fig.update_traces(hovertemplate="""
+        <b>%{customdata[2]}</b><br><br>
+        %{customdata[0]}<br><br>
+        %{customdata[1]}
+        <extra></extra>
+        """
+    )
+    fig.update_yaxes(title=None, visible=True, showticklabels=False)
+    fig.update_xaxes(title=None, visible=True, showticklabels=False)
 
     selected_points = plotly_events(fig, select_event=True, click_event=False)
-    point_index = [point["pointIndex"] for point in selected_points]
+    point_index = [point["x"] for point in selected_points]
 
     if point_index:
         # filter dataframe based on selected points
         df_new = df.copy(deep=True)
-        df_new = df_new.iloc[point_index]
+        df_new = df_new[df_new["x"].isin(point_index)]
         st.write(f"{len(df_new)} Selected Records")
-        st.dataframe(df_new[["text", "prediction", "annotation"]])
-        if ds[0].multi_label:
+        st.dataframe(df_new[["text", "annotation", "prediction"]])
+        if multi_label:
             annotation = st.multiselect("annotation", labels, default=labels)
         else:
             annotation = st.radio("annotation", labels, horizontal=True)
         del df_new["formatted_text"]
 
         if st.button("Annotate"):
-            df_new["annotation"] = annotation
-            ds_update = rg.read_pandas(df_new, task="TextClassification")
-            rg.log(ds_update, name=dataset_argilla_name, chunk_size=50)
+            with st.spinner("Logging data and refreshing data in plot."):
+                # update annotation where selected points in index
+                df_new["annotation"] = annotation
+                ds_update = rg.read_pandas(df_new, task="TextClassification")
+                rg.log(ds_update, name=dataset_argilla_name, chunk_size=50)
+                df["annotation"] = (df["annotation"]).where(~df["x"].isin(point_index), annotation)
+                st.experimental_rerun()
     else:
         st.warning("No point selected")
 else:

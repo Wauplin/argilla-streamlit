@@ -11,3 +11,4 @@ openpyxl
 xlsxwriter
 streamlit-plotly-events
 umap-learn
+pysbd
