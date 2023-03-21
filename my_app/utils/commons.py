@@ -85,7 +85,7 @@ def hf_login_flow():
     if not hf_auth_token:
         hf_auth_token = st.sidebar.text_input(
             "Hugging Face [User Access Tokens](https://huggingface.co/settings/tokens)",
-            os.environ.get("HF_AUTH_TOKEN", ""),
+            os.environ.get("HF_AUTH_TOKEN", ""), type="password"
         )
     if not hf_auth_token:
         st.error(
