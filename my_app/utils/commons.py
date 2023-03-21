@@ -40,9 +40,9 @@ def argilla_login_flow(title: str) -> str:
         )
     else:
         api_url = st.sidebar.text_input(
-            "API URL", "https://argilla-live-demo.hf.space"
+            "API URL", "https://argilla-live-demo.hf.space", type="password"
         )
-        api_key = st.sidebar.text_input("API Key", value="team.apikey")
+        api_key = st.sidebar.text_input("API Key", value="team.apikey", type="password")
         try:
             rg.init(
                 api_url=api_url,
