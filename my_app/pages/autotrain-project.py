@@ -1,7 +1,6 @@
 
 import argilla as rg
 import streamlit as st
-from huggingface_hub import ModelFilter
 from utils.autotrain import get_projects, schedule_retrain, task_id_mapping
 from utils.commons import (
     argilla_login_flow,
@@ -59,7 +58,7 @@ input_model = st.text_input(
     help="the base model to re-train",
 )
 
-potential_models = api.list_models(filter=ModelFilter(model_name=input_model))
+potential_models = api.list_models(model_name=input_model)
 if not len(potential_models) == 1:
     if not any([(input_model == model.modelId) for model in list(potential_models)]):
         st.warning("Please select a model from the list below:")
